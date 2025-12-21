@@ -3,7 +3,7 @@
 set -e
 
 NQPTP_VERSION="1.2.4"
-SHAIRPORT_SYNC_VERSION="4.3.2"
+SHAIRPORT_SYNC_VERSION="5.0-dev"
 TMP_DIR=""
 
 cleanup() {
@@ -111,25 +111,13 @@ install_shairport() {
     if [[ ! "$REPLY" =~ ^(yes|y|Y)$ ]]; then return; fi
 
     sudo apt update
-    sudo apt install -y --no-install-recommends wget unzip autoconf automake build-essential libtool git autoconf automake libpopt-dev libconfig-dev libasound2-dev avahi-daemon libavahi-client-dev libssl-dev libsoxr-dev libplist-dev libsodium-dev libavutil-dev libavcodec-dev libavformat-dev uuid-dev libgcrypt20-dev xxd
+    sudo apt install -y --no-install-recommends wget unzip autoconf automake build-essential libtool git autoconf automake libpopt-dev libconfig-dev libasound2-dev avahi-daemon libavahi-client-dev libssl-dev libplist-dev libsodium-dev libavutil-dev libavcodec-dev libavformat-dev uuid-dev libgcrypt20-dev xxd libplist-utils
 
     if [[ -z "$TMP_DIR" ]]; then
         TMP_DIR=$(mktemp -d)
     fi
 
     cd $TMP_DIR
-
-    # Install ALAC
-    wget -O alac-master.zip https://github.com/mikebrady/alac/archive/refs/heads/master.zip
-    unzip alac-master.zip
-    cd alac-master
-    autoreconf -fi
-    ./configure
-    make -j $(nproc)
-    sudo make install
-    sudo ldconfig
-    cd ..
-    rm -rf alac-master
 
     # Install NQPTP
     wget -O nqptp-${NQPTP_VERSION}.zip https://github.com/mikebrady/nqptp/archive/refs/tags/${NQPTP_VERSION}.zip
@@ -147,7 +135,7 @@ install_shairport() {
     unzip shairport-sync-${SHAIRPORT_SYNC_VERSION}.zip
     cd shairport-sync-${SHAIRPORT_SYNC_VERSION}
     autoreconf -fi
-    ./configure --sysconfdir=/etc --with-alsa --with-soxr --with-avahi --with-ssl=openssl --with-systemd --with-airplay-2 --with-apple-alac
+    ./configure --sysconfdir=/etc --with-alsa --without-soxr --without-pipe --with-avahi --with-ssl=openssl --with-systemd-startup --with-airplay-2
     make -j $(nproc)
     sudo make install
     cd ..
@@ -158,10 +146,12 @@ install_shairport() {
 general = {
   name = "${PRETTY_HOSTNAME:-$(hostname)}";
   output_backend = "alsa";
+  drift_tolerance_in_seconds = 0.015;
 }
 
 sessioncontrol = {
-  session_timeout = 20;
+  allow_session_interruption = "yes";
+  session_timeout = 120;
 };
 EOF
 
