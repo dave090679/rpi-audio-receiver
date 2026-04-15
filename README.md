@@ -23,6 +23,11 @@ The installation script asks whether to install each component.
 
 **Note**: the installation process is not reversible, there is no uninstall. The script is meant to be run on a clean device that is not used for anything else.
 
+On Raspberry Pi OS 13 (Trixie), the installer can also apply optional compatibility fixes:
+
+- safe Bluetooth RFKill unblock (immediately and on every boot)
+- optional HDMI audio disable (`dtoverlay=vc4-kms-v3d,noaudio`) to force output to headphone/USB/I2S
+
 ### Basic setup
 
 Lets you choose the hostname and the visible device name ("pretty hostname") which is displayed as Bluetooth name, in AirPlay clients and in Spotify.
@@ -200,6 +205,26 @@ To enable pairing with a PIN code instead of Simple Secure Pairing mode, the fol
 - macOS allows pairing with devices with sspmode=0 (and a PIN configured on the Pi). When sspmode=1, macOS decides upon a PIN and either the Pi has a fixed PIN list (which does not match => connection refused), or requires keyboard input on the Pi (which is not desired for a headless device).
 
 So you need to try yourself if this works with your setup.
+
+### Bluetooth not discoverable
+
+If the Raspberry Pi is not visible as a Bluetooth device after installation, the Bluetooth radio may be soft-blocked. Unblock it with:
+
+```sh
+rfkill unblock 0
+```
+
+The unblocked state is saved persistently and survives reboots, so this only needs to be done once.
+
+### Force audio output to headphone jack
+
+If audio is routed to HDMI instead of the 3.5 mm headphone jack, add the `noaudio` parameter to the `vc4-kms-v3d` overlay in `/boot/firmware/config.txt`:
+
+```
+dtoverlay=vc4-kms-v3d,noaudio
+```
+
+This disables HDMI audio and forces output to the headphone jack.
 
 ## Limitations
 
