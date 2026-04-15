@@ -18,7 +18,8 @@ Devices like phones, tablets and computers can play audio via this receiver.
 
 The installation script asks whether to install each component.
 
-    wget https://raw.githubusercontent.com/nicokaiser/rpi-audio-receiver/main/install.sh
+Download [`install.sh`](https://raw.githubusercontent.com/dave090679/rpi-audio-receiver/main/install.sh) from this fork, then run:
+
     bash install.sh
 
 **Note**: the installation process is not reversible, there is no uninstall. The script is meant to be run on a clean device that is not used for anything else.
@@ -43,6 +44,18 @@ Installs [Shairport Sync](https://github.com/mikebrady/shairport-sync) AirPlay 2
 ### Spotify Connect
 
 Installs [Raspotify](https://github.com/dtcooper/raspotify), an open source Spotify client for Raspberry Pi.
+
+### Fresh Trixie checklist
+
+For a fresh Raspberry Pi OS 13 (Trixie) setup, run through this checklist:
+
+1. Start from a clean Raspberry Pi OS 13 Lite image and complete first boot updates.
+2. Run the installer and enable Bluetooth/AirPlay/Spotify components you need.
+3. Answer `y` for the optional Trixie fixes.
+4. Answer `y` for HDMI audio disable when you use headphone jack, USB DAC, or I2S output.
+5. Reboot after installation to apply audio overlay and service changes.
+6. Verify Bluetooth state with `rfkill list` and pair a test device.
+7. Verify output device with `aplay -l` and run a short playback test.
 
 ## Additional steps
 
