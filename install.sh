@@ -66,6 +66,7 @@ Requires=bluetooth.service
 After=bluetooth.service
 
 [Service]
+ExecStartPre=/usr/bin/bluetoothctl power on
 ExecStartPre=/usr/bin/bluetoothctl discoverable on
 ExecStartPre=/usr/bin/bluetoothctl pairable on
 ExecStart=/usr/bin/bt-agent --capability=NoInputNoOutput
@@ -77,6 +78,7 @@ KillSignal=SIGUSR1
 WantedBy=multi-user.target
 EOF
     sudo systemctl daemon-reload
+    sudo systemctl enable --now bluetooth
     sudo systemctl enable --now bt-agent@hci0.service
     sudo systemctl enable --now bluealsa
     sudo systemctl enable --now bluealsa-aplay

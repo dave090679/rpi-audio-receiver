@@ -57,6 +57,25 @@ For a fresh Raspberry Pi OS 13 (Trixie) setup, run through this checklist:
 6. Verify Bluetooth state with `rfkill list` and pair a test device.
 7. Verify output device with `aplay -l` and run a short playback test.
 
+### Reviewer verification commands
+
+Run these commands on a freshly installed Trixie system after reboot:
+
+    # Core services should be active
+    systemctl --no-pager --full status bluetooth bt-agent@hci0 bluealsa bluealsa-aplay rfkill-unblock-bluetooth
+
+    # Bluetooth should not be soft/hard blocked
+    rfkill list
+
+    # Controller should be powered, pairable, and discoverable
+    bluetoothctl show
+
+    # noaudio overlay should be present if selected during install
+    grep -E '^dtoverlay=vc4-kms-v3d.*noaudio' /boot/firmware/config.txt
+
+    # Audio sink visibility
+    aplay -l
+
 ## Additional steps
 
 ### Enable HiFiBerry device
